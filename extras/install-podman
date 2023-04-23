@@ -56,6 +56,7 @@ fi
 verbose=0
 remove=0
 prefix="${HOME}/.local"
+custom_prefix=0
 
 # Parse arguments
 while :; do
@@ -76,6 +77,7 @@ while :; do
 		-P | --prefix)
 			if [ -n "$2" ]; then
 				prefix="$2"
+				custom_prefix=1
 				shift
 				shift
 			fi
@@ -86,7 +88,7 @@ while :; do
 done
 
 dest_path="${prefix}/podman"
-conf_path="${HOME}/.config/"
+conf_path="${prefix}/.config/"
 
 set -o errexit
 set -o nounset
@@ -101,8 +103,10 @@ export  PATH="${PATH}:${dest_path}/bin"
 
 if [ "${remove}" -ne 0 ]; then
 
-	printf >&2 "\033[1;31m Resetting...\n\033[0m"
-	"${dest_path}/bin/podman" system reset -f > /dev/null
+	if [ "${custom_prefix}" -eq 0 ]; then
+		printf >&2 "\033[1;31m Resetting...\n\033[0m"
+		"${dest_path}/bin/podman" system reset -f > /dev/null
+	fi
 	printf >&2 "\033[1;31m Removing...\n\033[0m"
 	rm -r "${dest_path}" "${conf_path}/containers"
 	printf >&2 "\033[1;31m Done.\n\033[0m"
@@ -182,9 +186,10 @@ printf >&2 "\033[1;31m Cleaning up...\n\033[0m"
 # Cleanup
 rm -rf /tmp/podman-linux-amd64/ /tmp/podman-linux-amd64.tar.gz /tmp/crun
 
-printf >&2 "\033[1;31m Migrating...\n\033[0m"
+if [ "${custom_prefix}" -eq 0 ]; then
+	printf >&2 "\033[1;31m Migrating...\n\033[0m"
 
-"${dest_path}/bin/podman" system migrate
-
+	"${dest_path}/bin/podman" system migrate
+fi
 printf >&2 "Successfully installed to %s.\n" "${dest_path}"
 printf >&2 "Be sure that %s is in your \$PATH environment variable for it to work.\n" "${dest_path}/bin"
