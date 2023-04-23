@@ -88,7 +88,11 @@ while :; do
 done
 
 dest_path="${prefix}/podman"
-conf_path="${prefix}/.config/"
+if [ "${custom_prefix}" -eq 1 ]; then # If we use custom prefix, then we are using it for podman installation
+	conf_path="${prefix}/.config/"
+else # Otherwise we use home folder
+	conf_path="${HOME}/.config"
+fi
 
 set -o errexit
 set -o nounset
