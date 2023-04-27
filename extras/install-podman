@@ -178,6 +178,7 @@ volume_path = "${dest_path}/share/podman/volume"
 crun = [ "${dest_path}/bin/crun" ]
 runc = [ "${dest_path}/bin/runc" ]
 [network]
+network_backend="cni"
 cni_plugin_dirs = [ "${dest_path}/lib/cni" ]
 EOF
 
