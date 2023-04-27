@@ -183,7 +183,8 @@ cni_plugin_dirs = [ "${dest_path}/lib/cni" ]
 EOF
 
 # Same for mouning programs
-sed -i "s|/var|${dest_path}|g" "${conf_path}/containers/storage.conf"
+sed -i "s|/var/run|$XDG_RUNTIME_DIR/alvr/containers|g" "${conf_path}/containers/storage.conf"
+sed -i "s|/var/lib|${dest_path}/share/podman|g" "${conf_path}/containers/storage.conf"
 sed -i "s|mount_program =.*|mount_program = \"${dest_path}/bin/fuse-overlayfs\"|g" \
 	"${conf_path}/containers/storage.conf"
 
