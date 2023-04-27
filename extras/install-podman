@@ -93,6 +93,7 @@ if [ "${custom_prefix}" -eq 1 ]; then # If we use custom prefix, then we are usi
 else # Otherwise we use home folder
 	conf_path="${HOME}/.config"
 fi
+containers_static_dir="${prefix}/.local/share/containers"
 
 set -o errexit
 set -o nounset
@@ -172,8 +173,8 @@ runtime = "crun"
 stop_timeout = 5
 conmon_path=[ "${dest_path}/lib/podman/conmon" ]
 helper_binaries_dir = [ "${dest_path}/lib/podman" ]
-static_dir = "${dest_path}/share/podman/libpod"
-volume_path = "${dest_path}/share/podman/volume"
+static_dir = "${containers_static_dir}/libpod"
+volume_path = "${containers_static_dir}/volume"
 [engine.runtimes]
 crun = [ "${dest_path}/bin/crun" ]
 runc = [ "${dest_path}/bin/runc" ]
@@ -183,8 +184,8 @@ cni_plugin_dirs = [ "${dest_path}/lib/cni" ]
 EOF
 
 # Same for mouning programs
-sed -i "s|/var/run/containers/storage|$XDG_RUNTIME_DIR/alvr/containers|g" "${conf_path}/containers/storage.conf"
-sed -i "s|/var/lib/containers/storage|${dest_path}/share/podman|g" "${conf_path}/containers/storage.conf"
+sed -i "s|/var/run/containers/storage|$XDG_RUNTIME_DIR/containers|g" "${conf_path}/containers/storage.conf"
+sed -i "s|/var/lib/containers/storage|${containers_static_dir}|g" "${conf_path}/containers/storage.conf"
 sed -i "s|mount_program =.*|mount_program = \"${dest_path}/bin/fuse-overlayfs\"|g" \
 	"${conf_path}/containers/storage.conf"
 
