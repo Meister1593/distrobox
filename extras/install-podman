@@ -95,6 +95,10 @@ else # Otherwise we use home folder
 fi
 containers_static_dir="${prefix}/.local/share/containers"
 
+export CONTAINERS_CONF="${conf_path}/containers/containers.conf"
+export CONTAINERS_REGISTRIES_CONF="${conf_path}/containers/registries.conf"
+export CONTAINERS_STORAGE_CONF="${conf_path}/containers/storage.conf"
+
 set -o errexit
 set -o nounset
 # set verbosity
