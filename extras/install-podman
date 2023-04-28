@@ -25,7 +25,7 @@
 # Outputs:
 #   print usage with examples.
 show_help() {
-	cat << EOF
+	cat <<EOF
 install --prefix ~/.local/podman
 
 Options:
@@ -39,7 +39,7 @@ EOF
 # First thing first, check if we have all the dependencies.
 printf >&2 "\033[1;31m Checking dependencies...\n\033[0m"
 if [ ! -e /etc/subuid ] || [ ! -e /etc/subgid ]; then
-	if ! command -v newuidmap > /dev/null; then
+	if ! command -v newuidmap >/dev/null; then
 		echo "Rootless podman requires the presence of newuidmap and newgidmap, please install package 'uidmap'"
 		echo "with your package manager."
 		exit 1
@@ -61,29 +61,29 @@ custom_prefix=0
 # Parse arguments
 while :; do
 	case $1 in
-		-h | --help)
-			# Call a "show_help" function to display a synopsis, then exit.
-			show_help
-			exit
-			;;
-		-v | --verbose)
+	-h | --help)
+		# Call a "show_help" function to display a synopsis, then exit.
+		show_help
+		exit
+		;;
+	-v | --verbose)
+		shift
+		verbose=1
+		;;
+	-R | --remove)
+		shift
+		remove=1
+		;;
+	-P | --prefix)
+		if [ -n "$2" ]; then
+			prefix="$2"
+			custom_prefix=1
 			shift
-			verbose=1
-			;;
-		-R | --remove)
 			shift
-			remove=1
-			;;
-		-P | --prefix)
-			if [ -n "$2" ]; then
-				prefix="$2"
-				custom_prefix=1
-				shift
-				shift
-			fi
-			;;
-		*) # Default case: If no more options then break out of the loop.
-			break ;;
+		fi
+		;;
+	*) # Default case: If no more options then break out of the loop.
+		break ;;
 	esac
 done
 
@@ -102,16 +102,14 @@ if [ "${verbose}" -ne 0 ]; then
 	set -o xtrace
 fi
 
-export  PATH="${PATH}:${dest_path}/bin"
+export PATH="${PATH}:${dest_path}/bin"
 
 ## Uninstall ###################################################################
 
 if [ "${remove}" -ne 0 ]; then
 
-	if [ "${custom_prefix}" -eq 0 ]; then
-		printf >&2 "\033[1;31m Resetting...\n\033[0m"
-		"${dest_path}/bin/podman" system reset -f > /dev/null
-	fi
+	printf >&2 "\033[1;31m Resetting...\n\033[0m"
+	"${dest_path}/bin/podman" system reset -f >/dev/null
 	printf >&2 "\033[1;31m Removing...\n\033[0m"
 	rm -r "${dest_path}" "${conf_path}/containers"
 	printf >&2 "\033[1;31m Done.\n\033[0m"
@@ -159,12 +157,12 @@ mv /tmp/crun "${dest_path}/bin/crun"
 printf >&2 "\033[1;31m Configuring...\n\033[0m"
 # We need to tell podman to use those costom directories in order to make
 # it work from custom directories
-cat << EOF > "${conf_path}/containers/containers.conf"
+cat <<EOF >"${conf_path}/containers/containers.conf"
 # See https://github.com/containers/common/blob/master/pkg/config/containers.conf
 [engine]
-infra_image="k8s.gcr.io/pause:3.8"
+infra_image=""
 # can be croupfs, systemd
-cgroup_manager = "systemd"
+cgroup_manager = "cgroupfs"
 # can be file, journald
 events_logger="file"
 exit_command_delay = 10
@@ -193,10 +191,9 @@ printf >&2 "\033[1;31m Cleaning up...\n\033[0m"
 # Cleanup
 rm -rf /tmp/podman-linux-amd64/ /tmp/podman-linux-amd64.tar.gz /tmp/crun
 
-if [ "${custom_prefix}" -eq 0 ]; then
-	printf >&2 "\033[1;31m Migrating...\n\033[0m"
+printf >&2 "\033[1;31m Migrating...\n\033[0m"
 
-	"${dest_path}/bin/podman" system migrate
-fi
+"${dest_path}/bin/podman" system migrate
+
 printf >&2 "Successfully installed to %s.\n" "${dest_path}"
 printf >&2 "Be sure that %s is in your \$PATH environment variable for it to work.\n" "${dest_path}/bin"
