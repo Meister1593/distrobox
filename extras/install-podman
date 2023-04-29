@@ -205,9 +205,9 @@ printf >&2 "\033[1;31m Cleaning up...\n\033[0m"
 # Cleanup
 rm -rf /tmp/podman-linux-amd64/ /tmp/podman-linux-amd64.tar.gz /tmp/crun
 
-printf >&2 "\033[1;31m Migrating...\n\033[0m"
-
 if [ "${custom_prefix}" -eq 0 ]; then
+	printf >&2 "\033[1;31m Migrating...\n\033[0m"
+
 	"${dest_path}/bin/podman" system migrate
 fi
 printf >&2 "Successfully installed to %s.\n" "${dest_path}"
