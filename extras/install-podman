@@ -98,10 +98,11 @@ done
 dest_path="${prefix}/podman"
 if [ "${custom_prefix}" -eq 1 ]; then # If we use custom prefix, then we are using it for podman installation
 	conf_path="${prefix}/.config/"
+	containers_static_dir="${prefix}/.local/share/containers"
 else # Otherwise we use home folder
 	conf_path="${HOME}/.config"
+	containers_static_dir="${prefix}/share/containers"
 fi
-containers_static_dir="${prefix}/share/containers"
 
 export CONTAINERS_CONF="${conf_path}/containers/containers.conf"
 export CONTAINERS_REGISTRIES_CONF="${conf_path}/containers/registries.conf"
