@@ -120,9 +120,10 @@ export PATH="${PATH}:${dest_path}/bin"
 ## Uninstall ###################################################################
 
 if [ "${remove}" -ne 0 ]; then
-
-	printf >&2 "\033[1;31m Resetting...\n\033[0m"
-	"${dest_path}/bin/podman" system reset -f >/dev/null
+	if [ "${custom_prefix}" -eq 0 ]; then
+		printf >&2 "\033[1;31m Resetting...\n\033[0m"
+		"${dest_path}/bin/podman" system reset -f >/dev/null
+	fi
 	printf >&2 "\033[1;31m Removing...\n\033[0m"
 	rm -r "${dest_path}" "${conf_path}/containers"
 	printf >&2 "\033[1;31m Done.\n\033[0m"
@@ -206,7 +207,8 @@ rm -rf /tmp/podman-linux-amd64/ /tmp/podman-linux-amd64.tar.gz /tmp/crun
 
 printf >&2 "\033[1;31m Migrating...\n\033[0m"
 
-"${dest_path}/bin/podman" system migrate
-
+if [ "${custom_prefix}" -eq 0 ]; then
+	"${dest_path}/bin/podman" system migrate
+fi
 printf >&2 "Successfully installed to %s.\n" "${dest_path}"
 printf >&2 "Be sure that %s is in your \$PATH environment variable for it to work.\n" "${dest_path}/bin"
