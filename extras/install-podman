@@ -56,6 +56,7 @@ fi
 verbose=0
 remove=0
 prefix="${HOME}/.local"
+prefix_name=""
 custom_prefix=0
 
 # Parse arguments
@@ -82,6 +83,13 @@ while :; do
 			shift
 		fi
 		;;
+	-n | --prefix-name)
+		if [ -n "$2" ]; then
+			prefix_name="$2"
+			shift
+			shift
+		fi
+		;;
 	*) # Default case: If no more options then break out of the loop.
 		break ;;
 	esac
@@ -93,7 +101,7 @@ if [ "${custom_prefix}" -eq 1 ]; then # If we use custom prefix, then we are usi
 else # Otherwise we use home folder
 	conf_path="${HOME}/.config"
 fi
-containers_static_dir="${prefix}/.local/share/containers"
+containers_static_dir="${prefix}/share/containers"
 
 export CONTAINERS_CONF="${conf_path}/containers/containers.conf"
 export CONTAINERS_REGISTRIES_CONF="${conf_path}/containers/registries.conf"
@@ -186,6 +194,7 @@ cni_plugin_dirs = [ "${dest_path}/lib/cni" ]
 EOF
 
 # Same for mouning programs
+sed -i "s|^runroot =.*|runroot = \"\$XDG_RUNTIME_DIR/${prefix_name}/containers\"|g" "${conf_path}/containers/storage.conf"
 sed -i "s|^# rootless_storage_path.*|rootless_storage_path = \"${containers_static_dir}\"|g" "${conf_path}/containers/storage.conf"
 sed -i "s|mount_program =.*|mount_program = \"${dest_path}/bin/fuse-overlayfs\"|g" \
 	"${conf_path}/containers/storage.conf"
