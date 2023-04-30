@@ -176,7 +176,7 @@ cat <<EOF >"${conf_path}/containers/containers.conf"
 [engine]
 infra_image=""
 # can be croupfs, systemd
-cgroup_manager = "cgroupfs"
+cgroup_manager = "systemd"
 # can be file, journald
 events_logger="file"
 exit_command_delay = 10
