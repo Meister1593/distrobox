@@ -197,6 +197,7 @@ EOF
 
 # Same for mouning programs
 sed -i "s|^runroot =.*|runroot = \"\$XDG_RUNTIME_DIR/${prefix_name}/containers\"|g" "${conf_path}/containers/storage.conf"
+sed -i "s|^graphroot =.*|graphroot = \"${containers_static_dir}\"|g" "${conf_path}/containers/storage.conf"
 sed -i "s|^# rootless_storage_path.*|rootless_storage_path = \"${containers_static_dir}\"|g" "${conf_path}/containers/storage.conf"
 sed -i "s|mount_program =.*|mount_program = \"${dest_path}/bin/fuse-overlayfs\"|g" \
 	"${conf_path}/containers/storage.conf"
