@@ -166,6 +166,13 @@ mkdir -p "${conf_path}" "${dest_path}"
 cp -r /tmp/podman-linux-amd64/usr/local/bin "${dest_path}"
 cp -r /tmp/podman-linux-amd64/usr/local/lib "${dest_path}"
 cp -r /tmp/podman-linux-amd64/etc/containers "${conf_path}"
+
+# TODO: temporary - policies getting from home user folder by podman, issue needs to be tracked
+if [ ! -f "${HOME}/.config/containers/policy.json" ]; then
+	mkdir -p ~/.config/containers
+	cp /tmp/podman-linux-amd64/etc/containers/policy.json ~/.config/containers
+fi
+
 mv /tmp/crun "${dest_path}/bin/crun"
 
 printf >&2 "\033[1;31m Configuring...\n\033[0m"
