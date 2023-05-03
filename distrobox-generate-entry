@@ -172,20 +172,20 @@ fi
 case "${container_manager}" in
 	autodetect)
 		if command -v podman > /dev/null; then
-			container_manager="podman"
-			container_manager_cp_command="podman cp"
+			container_manager="podman unshare podman"
+			container_manager_cp_command="podman unshare podman cp"
 		elif command -v docker > /dev/null; then
-			container_manager="docker"
-			container_manager_cp_command="docker cp -L"
+			container_manager="docker unshare docker"
+			container_manager_cp_command="docker unshare docker cp -L"
 		fi
 		;;
 	podman)
-		container_manager="podman"
-		container_manager_cp_command="podman cp"
+		container_manager="podman unshare podman"
+		container_manager_cp_command="podman unshare podman cp"
 		;;
 	docker)
-		container_manager="docker"
-		container_manager_cp_command="docker cp -L"
+		container_manager="docker unshare docker"
+		container_manager_cp_command="docker unshare docker cp -L"
 		;;
 	*)
 		printf >&2 "Invalid input %s.\n" "${container_manager}"

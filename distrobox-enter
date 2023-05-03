@@ -238,16 +238,16 @@ fi
 case "${container_manager}" in
 	autodetect)
 		if command -v podman > /dev/null; then
-			container_manager="podman"
+			container_manager="podman unshare podman"
 		elif command -v docker > /dev/null; then
-			container_manager="docker"
+			container_manager="docker unshare docker"
 		fi
 		;;
 	podman)
-		container_manager="podman"
+		container_manager="podman unshare podman"
 		;;
 	docker)
-		container_manager="docker"
+		container_manager="docker unshare docker"
 		;;
 	*)
 		printf >&2 "Invalid input %s.\n" "${container_manager}"
